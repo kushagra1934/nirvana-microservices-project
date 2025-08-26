@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Document, Schema } from "mongoose";
 
+//define the IUser interface extending mongoose Document
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -9,6 +10,8 @@ export interface IUser extends Document {
   playlist: string[];
 }
 
+
+//making the schema with IUser 
 const schema: Schema<IUser> = new Schema(
   {
     name: {
