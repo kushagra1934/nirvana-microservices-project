@@ -28,7 +28,10 @@ app.get("/", (req, res) => {
   res.send("User service is running");
 });
 
-app.listen(port, () => {
-  console.log(`User service is running on port ${port}`);
-  connectDb();
+connectDb().then(() => {
+  app.listen(port, () => {
+    console.log(`User service is running on port ${port}`);
+  });
 });
+
+

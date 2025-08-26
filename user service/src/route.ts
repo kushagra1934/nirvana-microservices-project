@@ -5,6 +5,8 @@ import { isAuth } from './middleware.js';
 
 const router=express.Router();
 
+//user routes
+
 router.post("/user/register",registerUser);
 router.post("/user/login",loginUser);
 router.get("/user/me",isAuth,myProfile);
