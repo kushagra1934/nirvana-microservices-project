@@ -216,7 +216,7 @@ export const deleteSong = TryCatch(
         message: "Song not found",
       });
       return;
-    }
+    } 
 
     await sql`DELETE FROM songs WHERE id=${id}`;
 
