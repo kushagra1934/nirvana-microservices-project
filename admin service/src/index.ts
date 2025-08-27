@@ -3,9 +3,27 @@ import dotenv from "dotenv";
 import { sql } from "./config/db.js";
 import adminRoutes from "./route.js";
 import cloudinary from "cloudinary";
-
+import redis from "redis";
+import cors from "cors"
 
 dotenv.config();
+
+export const redisClient = redis.createClient({
+  password: process.env.Redis_Password as string,
+  socket: {
+    host: "redis-18187.c84.us-east-1-2.ec2.redns.redis-cloud.com",
+    port: 18187,
+  },
+});
+
+redisClient
+  .connect()
+  .then(() => {
+    console.log("Connected to Redis");
+  })
+  .catch((err) => {
+    console.error("Redis connection error:", err);
+  });
 
 cloudinary.v2.config({
   cloud_name: process.env.Cloud_Name as string,
@@ -14,12 +32,12 @@ cloudinary.v2.config({
 });
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-
-async function initDB(){
-    try {
-        await sql`
+async function initDB() {
+  try {
+    await sql`
         CREATE TABLE IF NOT EXISTS albums(
             id SERIAL PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
@@ -29,7 +47,7 @@ async function initDB(){
         )
         `;
 
-        await sql`
+    await sql`
         CREATE TABLE IF NOT EXISTS songs(
             id SERIAL PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
@@ -41,23 +59,18 @@ async function initDB(){
         )
         `;
 
-
-
-        console.log("Database Intialized Successfully");
-    } catch (error) {
-        console.log("Error initDb",error)
-    }
+    console.log("Database Intialized Successfully");
+  } catch (error) {
+    console.log("Error initDb", error);
+  }
 }
 
-
-app.use("/api/v1",adminRoutes);
+app.use("/api/v1", adminRoutes);
 
 const port = process.env.PORT || 6000;
 
-
-initDB().then(()=>{
-    app.listen(port, () => {
-      console.log(`Admin service is running on port ${port}`);
-    });
-})
-
+initDB().then(() => {
+  app.listen(port, () => {
+    console.log(`Admin service is running on port ${port}`);
+  });
+});
